@@ -16,6 +16,7 @@
 
 package io.github.webbluetoothcg.bletestperipheral;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -32,6 +33,7 @@ import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -45,6 +47,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import android.support.v4.app.ActivityCompat;
 import io.github.webbluetoothcg.bletestperipheral.ServiceFragment.ServiceFragmentDelegate;
 
 public class Peripheral extends Activity implements ServiceFragmentDelegate {
@@ -58,6 +61,19 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
   private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID
       .fromString("00002902-0000-1000-8000-00805f9b34fb");
 
+  private static final int MULTIPLE_PERMISSION = 1004;
+  private String[] PERMISSIONS = {Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+  public boolean runtimeCheckPermission(Context context, String... permissions) {
+    if (context != null && permissions != null) {
+      for (String permission : permissions) {
+        if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+          return false;
+
+        }
+      }
+    }
+    return true;
+  }
   private TextView mAdvStatus;
   private TextView mConnectionStatus;
   private ServiceFragment mCurrentServiceFragment;
@@ -244,6 +260,8 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_peripherals);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -252,6 +270,13 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
     mBluetoothDevices = new HashSet<>();
     mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
     mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+    //블루투스 권한 요청
+    if (!runtimeCheckPermission(this, PERMISSIONS)) {
+      ActivityCompat.requestPermissions(this, PERMISSIONS, MULTIPLE_PERMISSION);
+    } else {
+      Log.i("권한 테스트", "권한이 있네요");
+    }
 
     // If we are not being restored from a previous state then create and add the fragment.
     if (savedInstanceState == null) {
