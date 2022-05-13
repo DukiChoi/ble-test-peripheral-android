@@ -19,13 +19,21 @@
              android:layout_height="match_parent"
              tools:context="io.github.webbluetoothcg.bletestperipheral.HealthThermometerServiceFragment">
 
+    <Button
+        android:id="@+id/button_SendDataNotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gridLayout_characteristicsValues"
+        android:text="@string/notify"
+        android:textColor="@color/accent" />
+
     <TextView
-            android:id="@+id/textView_serviceName"
-            android:text="@string/healthThermometerServiceName"
-            android:textAppearance="@style/subheader"
-            android:gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"/>
+        android:id="@+id/textView_serviceName"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:text="@string/NordicUartServiceName"
+        android:textAppearance="@style/subheader" />
     <GridLayout
             android:id="@+id/gridLayout_characteristicsValues"
             android:layout_width="fill_parent"
@@ -35,16 +43,16 @@
             android:layout_below="@id/textView_serviceName">
 
         <TextView
-                android:id="@+id/label_temperatureMeasurementValue"
-                android:text="@string/label_temperatureMeasurementValue"
+                android:id="@+id/label_SendValue"
+                android:text="@string/label_SendValue"
                 android:textAppearance="@style/label"
                 android:layout_gravity="fill"
                 android:layout_columnWeight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         <TextView
-                android:id="@+id/label_measurementIntervalValue"
-                android:text="@string/label_measurementInterval"
+                android:id="@+id/label_ReceiveValue"
+                android:text="@string/label_ReceiveValue"
                 android:textAppearance="@style/label"
                 android:layout_gravity="fill"
                 android:layout_columnWeight="1"
@@ -52,29 +60,24 @@
                 android:layout_height="wrap_content"/>
 
         <EditText
-                android:id="@+id/EditText_TemperatureMeasurement"
-                android:gravity="center"
-                android:inputType="numberDecimal"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        <EditText
-                android:id="@+id/editText_MeasurementInterval"
-                android:maxLength="5"
-                android:gravity="center"
-                android:inputType="number"
-                android:layout_columnWeight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-    </GridLayout>
+            android:id="@+id/EditText_Sendvalue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-    <TextView
-        android:id="@+id/textView_notifications"
-        android:layout_width="wrap_content"
-        android:layout_height="56dp"
-        android:layout_below="@+id/gridLayout_characteristicsValues"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_vertical"
-        android:textAppearance="@style/text" />
+        <TextView
+            android:id="@+id/Textview_Recievevalue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="center"
+            android:maxLength="5"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </GridLayout>
 
 </RelativeLayout>

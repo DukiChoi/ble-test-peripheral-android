@@ -181,8 +181,8 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
         int offset, byte[] value) {
       super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
           responseNeeded, offset, value);
-      Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value));
       int status = mCurrentServiceFragment.writeCharacteristic(characteristic, offset, value);
+      Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value) + "/ status: " + status);
       if (responseNeeded) {
         mGattServer.sendResponse(device, requestId, status,
             /* No need to respond with an offset */ 0,
@@ -264,12 +264,6 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
 
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_peripherals);
-    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    mAdvStatus = (TextView) findViewById(R.id.textView_advertisingStatus);
-    mConnectionStatus = (TextView) findViewById(R.id.textView_connectionStatus);
-    mBluetoothDevices = new HashSet<>();
-    mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-    mBluetoothAdapter = mBluetoothManager.getAdapter();
 
     //블루투스 권한 요청
     if (!runtimeCheckPermission(this, PERMISSIONS)) {
@@ -277,6 +271,14 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
     } else {
       Log.i("권한 테스트", "권한이 있네요");
     }
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    mAdvStatus = (TextView) findViewById(R.id.textView_advertisingStatus);
+    mConnectionStatus = (TextView) findViewById(R.id.textView_connectionStatus);
+    mBluetoothDevices = new HashSet<>();
+    mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+    mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+
 
     // If we are not being restored from a previous state then create and add the fragment.
     if (savedInstanceState == null) {
@@ -288,6 +290,8 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
         mCurrentServiceFragment = new HeartRateServiceFragment();
       } else if (peripheralIndex == 2) {
         mCurrentServiceFragment = new HealthThermometerServiceFragment();
+      } else if (peripheralIndex == 3) {
+        mCurrentServiceFragment = new NordicUartServiceFragment();
       } else {
         Log.wtf(TAG, "Service doesn't exist");
       }

@@ -60,6 +60,10 @@
     <string name="notificationsEnabled">Notifications enabled</string>
     <string name="notificationsNotEnabled">Notifications not enabled</string>
 
+    <!-- Nordic Uart Service -->
+    <string name="NordicUartServiceName">Nordic Uart Service</string>
+    <string name="label_SendValue"> Send Message</string>
+    <string name="label_ReceiveValue"> Receive Message</string>
     <string name="status_noLeAdv">LE Advertising is not available. Please pair with a device to be
         discoverable.
     </string>

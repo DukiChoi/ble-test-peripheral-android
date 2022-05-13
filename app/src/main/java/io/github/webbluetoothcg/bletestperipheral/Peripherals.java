@@ -26,7 +26,7 @@ import android.widget.ListView;
 
 public class Peripherals extends ListActivity {
 
-  private static final String[] PERIPHERALS_NAMES = new String[]{"Battery", "Heart Rate Monitor", "Health Thermometer"};
+  private static final String[] PERIPHERALS_NAMES = new String[]{"Battery", "Heart Rate Monitor", "Health Thermometer", "Nordic Uart"};
   public final static String EXTRA_PERIPHERAL_INDEX = "PERIPHERAL_INDEX";
 
   @Override
