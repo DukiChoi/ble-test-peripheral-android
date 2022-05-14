@@ -17,10 +17,16 @@
 package io.github.webbluetoothcg.bletestperipheral;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -293,7 +299,14 @@ public class NordicUartServiceFragment extends ServiceFragment {
   public void onStop() {
     super.onStop();
   }
-
+  @Override
+  public void onPause(){
+    super.onPause();
+  }
+  @Override
+  public void onResume(){
+    super.onResume();
+  }
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //        화면설정 끝
