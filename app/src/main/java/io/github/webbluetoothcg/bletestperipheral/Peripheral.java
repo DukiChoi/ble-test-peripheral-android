@@ -58,6 +58,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
 
   private static final UUID CHARACTERISTIC_USER_DESCRIPTION_UUID = UUID
       .fromString("00002901-0000-1000-8000-00805f9b34fb");
+  //이게 CCCD UUID이다.
   private static final UUID CLIENT_CHARACTERISTIC_CONFIGURATION_UUID = UUID
       .fromString("00002902-0000-1000-8000-00805f9b34fb");
 
@@ -122,7 +123,15 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
       mAdvStatus.setText(R.string.status_advertising);
     }
   };
+  /*
+  GATT 서버를 연다고 함은 이렇게 외부 요청 같은 것들을 계속 Callback 받으면서 각각의 요청들에 대한
+  세세한 설정 들을 해놓는 것이다.
+  예를 들어서 Write요청을 받게 된다면 WriteCharacteristic 같은 펑션 콜을 한다든가 하는 것이
+  다 여기에 구현이 되어있다.
 
+  다른 모든 fragment들에서 공통적으로 BLUETOOTHGATT 서버를 열어서 사용하기 때문에 fragment가 아닌
+  안드로이드에서 구조적으로 윗 단계인 Activity에 이걸 구현한 것.
+   */
   private BluetoothGattServer mGattServer;
   private final BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
     @Override
@@ -257,6 +266,13 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
   /////////////////////////////////
   ////// Lifecycle Callbacks //////
   /////////////////////////////////
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //        여기는 ON CREATE VIEW 등등 액티비티의 시작화면 관련 설정
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

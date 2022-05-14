@@ -65,9 +65,9 @@
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:gravity="center"
-            android:inputType="numberDecimal"
             android:minHeight="48dp"
             tools:ignore="SpeakableTextPresentCheck" />
+        <!--            android:inputType="numberDecimal"-->
 
         <TextView
             android:id="@+id/Textview_Recievevalue"
@@ -75,9 +75,9 @@
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:gravity="center"
-            android:maxLength="5"
             android:minHeight="48dp"
             tools:ignore="SpeakableTextPresentCheck" />
+        <!--        android:maxLength='10'-->
     </GridLayout>
 
 </RelativeLayout>

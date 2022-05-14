@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    //이 부분에서도 sdk를 이렇게 다 최신 버전으로 맞춰줘야 했음
     compileSdkVersion 32
     buildToolsVersion '32.0.0'
     defaultConfig {
@@ -26,6 +27,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //이거 추가하는게 진짜 중요하다.
     implementation 'com.android.support:support-compat:28.0.0'
 
 }

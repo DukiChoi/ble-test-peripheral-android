@@ -34,16 +34,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-
+import java.nio.charset.StandardCharsets;
 import org.w3c.dom.Text;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.TimerTask;
 import java.util.UUID;
 
 public class NordicUartServiceFragment extends ServiceFragment {
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //        변수 선언
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
   private static final int MIN_UINT = 0;
   private static final int MAX_UINT8 = (int) Math.pow(2, 8) - 1;
   private static final int MAX_UINT16 = (int) Math.pow(2, 16) - 1;
@@ -51,20 +60,20 @@ public class NordicUartServiceFragment extends ServiceFragment {
    * See <a href="https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.health_thermometer.xml">
    * Health Thermometer Service</a>
    * This service exposes two characteristics with descriptors:
-   *   - Measurement Interval Characteristic:
-   *       - Listen to notifications to from which you can subscribe to notifications
-   *     - CCCD Descriptor:
-   *       - Read/Write to get/set notifications.
-   *     - User Description Descriptor:
-   *       - Read/Write to get/set the description of the Characteristic.
-   *   - Temperature Measurement Characteristic:
-   *       - Read value to get the current interval of the temperature measurement timer.
-   *       - Write value resets the temperature measurement timer with the new value. This timer
-   *         is responsible for triggering value changed events every "Measurement Interval" value.
-   *     - CCCD Descriptor:
-   *       - Read/Write to get/set notifications.
-   *     - User Description Descriptor:
-   *       - Read/Write to get/set the description of the Characteristic.
+   * - Measurement Interval Characteristic:
+   * - Listen to notifications to from which you can subscribe to notifications
+   * - CCCD Descriptor:
+   * - Read/Write to get/set notifications.
+   * - User Description Descriptor:
+   * - Read/Write to get/set the description of the Characteristic.
+   * - Temperature Measurement Characteristic:
+   * - Read value to get the current interval of the temperature measurement timer.
+   * - Write value resets the temperature measurement timer with the new value. This timer
+   * is responsible for triggering value changed events every "Measurement Interval" value.
+   * - CCCD Descriptor:
+   * - Read/Write to get/set notifications.
+   * - User Description Descriptor:
+   * - Read/Write to get/set the description of the Characteristic.
    */
   private static final int INITIAL_SEND = 0;
   private static final int INITIAL_RECEIVE = 0;
@@ -77,6 +86,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
    * Temperature Measurement</a>
    */
 
+  //이건 RxChar UUID 설정 부분 (보내는 Char)
   private static final UUID SEND_UUID = UUID
           .fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");  //RxChar UUID
   private static final int SEND_VALUE_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
@@ -84,6 +94,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
           "as RxChar Nordic Uart device";
 
 
+  //이건 TxChar UUID 설정 부분 (받아오는 Char)
   /**
    * See <a href="https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.measurement_interval.xml">
    * Measurement Interval</a>
@@ -97,6 +108,11 @@ public class NordicUartServiceFragment extends ServiceFragment {
           "as TxChar of Nordic Uart device";
 
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //       텍스트 뷰, 클릭 리스너 설정 ( 사용자 상호작용 설정 )
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
   private BluetoothGattService mNordicUartService;
@@ -118,20 +134,28 @@ public class NordicUartServiceFragment extends ServiceFragment {
         String newSENDValueString = textView.getText().toString();
         if (isValidCharacteristicValue(newSENDValueString,
                 SEND_VALUE_FORMAT)) {
-          int newSendValue = Integer.parseInt(newSENDValueString);
-          mSendCharacteristic.setValue(newSendValue,
-                  SEND_VALUE_FORMAT,
-                  /* offset */ 1);
+//          //첫번째. int로 보내기
+//          int newSendValue = Integer.parseInt(newSENDValueString);
+//
+//          mSendCharacteristic.setValue(newSendValue,
+//                  SEND_VALUE_FORMAT,
+//                  /* offset */ 1);
+
+          //두번째, String을 byte 형식으로 바꿔서 보내기
+          byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
+          mSendCharacteristic.setValue(newSENDbytes);
+
         } else {
-          Toast.makeText(getActivity(), R.string.heartRateMeasurementValueInvalid,
+          //이건 이제
+          Toast.makeText(getActivity(), "Chracteristic 형식이 틀립니다.",
                   Toast.LENGTH_SHORT).show();
         }
       }
       return false;
     }
   };
-  
-  //이건 사실 필요없음
+
+  //이건 사실 필요없음. TxChar값이 들어가는 건 EditText가 아닌 입력 불가능한 TextView라서 굳이 리스닝 해줄 필요 없기 떄문.
   private final OnEditorActionListener mOnEditorActionListenerReceive = new OnEditorActionListener() {
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
@@ -144,7 +168,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
                   RECEIVE_VALUE_FORMAT,
                   /* offset */ 1);
         } else {
-          Toast.makeText(getActivity(), R.string.heartRateMeasurementValueInvalid,
+          Toast.makeText(getActivity(), "Chracteristic 형식이 틀립니다.",
                   Toast.LENGTH_SHORT).show();
         }
       }
@@ -152,39 +176,40 @@ public class NordicUartServiceFragment extends ServiceFragment {
     }
   };
 
+
   private static final String TAG = Peripheral.class.getCanonicalName();
-  //이건 Notify 버튼 즉 Send 버튼을 리스닝 해줌
+  //이건 Notify 버튼 즉 Send 버튼을 리스닝 해주는 함수
   private final View.OnClickListener mNotifyButtonListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-      int newSENDValueString = Integer.parseInt(mEditTextSendValue.getText().toString());
-      mSendCharacteristic.setValue(newSENDValueString,
-              SEND_VALUE_FORMAT,
-              /* offset */ 1);
+
+//      //첫번째. int만 보내기
+//      int newSENDValueString = Integer.parseInt(mEditTextSendValue.getText().toString());
+//
+//      mSendCharacteristic.setValue(newSENDValueString,
+//              SEND_VALUE_FORMAT,
+//              /* offset */ 1);
+
+      //두번째, String을 byte 형식으로 바꿔서 보내기
+      byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
+      mSendCharacteristic.setValue(newSENDbytes);
+
+      //★★★★★★★★★★★★★★★★★★★★★★★★★
+      //정확히는 여기에서 NOTIFICATION을 SEND 해준다.
+      //★★★★★★★★★★★★★★★★★★★★★★★★★
       mDelegate.sendNotificationToDevices(mSendCharacteristic);
       Log.v(TAG, "sent: " + Arrays.toString(mSendCharacteristic.getValue()));
     }
   };
 
-  private boolean isValidCharacteristicValue(String s, int format) {
-    try {
-      int value = Integer.parseInt(s);
-      if (format == BluetoothGattCharacteristic.FORMAT_UINT8) {
-        return (value >= MIN_UINT) && (value <= MAX_UINT8);
-      } else if (format == BluetoothGattCharacteristic.FORMAT_UINT16) {
-        return (value >= MIN_UINT) && (value <= MAX_UINT16);
-      } else {
-        throw new IllegalArgumentException(format + " is not a valid argument");
-      }
-    } catch (NumberFormatException e) {
-      return false;
-    }
-  }
 
 
-  //원래있던 MeasurementInterval을 ReceiveValue로 바꿔줌
-
-
+  /*
+  원래있던 MeasurementInterval을 ReceiveValue로 바꿔줌
+  BLUETOOTH GATT 다루는 부분은 아래 사이트 참고
+  https://developer.android.com/reference/android/bluetooth/BluetoothGattCharacteristic#setValue(int,%20int,%20int)
+  sendValue getValue 등 쓸 수 있는 함수들 인자 관련 설명 있음.
+  */
 
   public NordicUartServiceFragment() {
 
@@ -221,7 +246,8 @@ public class NordicUartServiceFragment extends ServiceFragment {
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
-  //        여기는 ON CREATE VIEW
+  //        여기는 ON CREATE VIEW 등등 시작화면 관련 설정
+  //  https://developer.android.com/reference/android/app/Fragment 참고
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
   @Override
@@ -229,7 +255,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
                            Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.fragment_nordic_uart, container, false);
-    mEditTextSendValue= (EditText) view
+    mEditTextSendValue = (EditText) view
             .findViewById(R.id.EditText_Sendvalue);
     mEditTextSendValue
             .setOnEditorActionListener(mOnEditorActionListenerSend);
@@ -268,6 +294,12 @@ public class NordicUartServiceFragment extends ServiceFragment {
     super.onStop();
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //        화면설정 끝
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
   @Override
   public BluetoothGattService getBluetoothGattService() {
     return mNordicUartService;
@@ -277,8 +309,8 @@ public class NordicUartServiceFragment extends ServiceFragment {
   public ParcelUuid getServiceUUID() {
     return new ParcelUuid(UART_SERVICE_UUID);
   }
-  
-  //이건 처음에 onCreate에서 값 세팅 해주는 것
+
+  //이건 처음에 onCreate에서 값 세팅 해주는 것. 그냥 시작에만 한번 딱 설정해준다.
   private void setSendValue(int SendValue, int ReceiveValue) {
 
     /* Set the org.bluetooth.characteristic.temperature_measurement
@@ -294,14 +326,17 @@ public class NordicUartServiceFragment extends ServiceFragment {
      *   Unused (00000)
      */
 
-    //보낼 값이니까 Send Characteristic(TxChar)의 value 값을 변경해준다.
+    //보낼 값이니까 Send Characteristic(TxChar)의 value 값을 변경해주는데 byte array형식으로 집어넣는다.
     //이건 앞으로 (uint8형식으로 넣는다는 뜻) flag를 8(uint8)로 맞춰주는 것.
     mSendCharacteristic.setValue(new byte[]{0b00001000, 0});
     mReceiveCharacteristic.setValue(new byte[]{0b00001000, 0});
     // Characteristic Value: [flags, 0, 0, 0]
+
+
     mSendCharacteristic.setValue(SendValue,
             SEND_VALUE_FORMAT,
             /* offset */ 1);
+
     mReceiveCharacteristic.setValue(ReceiveValue,
             RECEIVE_VALUE_FORMAT,
             /* offset */ 1);
@@ -309,33 +344,40 @@ public class NordicUartServiceFragment extends ServiceFragment {
     mEditTextSendValue.setText(Integer.toString(SendValue));
     mTextViewReceiveValue.setText(Integer.toString(ReceiveValue));
     //여기서 보낼 값으로 에딧 텍스트 값도 변경해줌
-    }
+  }
 
 
-
-  //이건 Receive 값 받아오는 것
+  //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+  //이건 Receive 값 받아오는 함수(Write 권한 있는 TxChar)
+  //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
   @Override
   public int writeCharacteristic(BluetoothGattCharacteristic characteristic, int offset, byte[] value) {
     if (offset != 0) {
       return BluetoothGatt.GATT_INVALID_OFFSET;
     }
     // Heart Rate control point is a 8bit characteristic
-    if (value.length != 1) {
+    //글자수 제한인데 원래 1글자만 받던거 풀어줌.
+    if (value.length > 1000) {
       return BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH;
     }
     getActivity().runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          String converted = new String(value);
-          mTextViewReceiveValue.setText(converted);
-          Log.v(TAG, "Received: " + Arrays.toString(mReceiveCharacteristic.getValue()));
+      @Override
+      public void run() {
+        //이 부분에서 아스키 코드로 된 btye array를 string으로 변환해줌
+        String converted = "";
+        for (int i : value) {
+          converted = converted.concat(Character.toString((char) i));
         }
+        mTextViewReceiveValue.setText(converted);
+        //로그에서 원래 아스키코드 배열과 / 변환되어 나온 string값을 보여줌
+        Log.v(TAG, "Received: " + Arrays.toString(value) + " / converted into:" + converted);
+      }
     });
     return BluetoothGatt.GATT_SUCCESS;
   }
 
-  
-  // 노티피케이션을 쓸 수 있게 되면 알림
+
+  // 노티피케이션을 쓸 수 있게 되면 앱 푸시 알림
   @Override
   public void notificationsEnabled(BluetoothGattCharacteristic characteristic, boolean indicate) {
     if (characteristic.getUuid() != SEND_UUID) {
@@ -348,17 +390,18 @@ public class NordicUartServiceFragment extends ServiceFragment {
     getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        int newSENDValueString = Integer.parseInt(mEditTextSendValue.getText().toString());
-        mSendCharacteristic.setValue(newSENDValueString,
-                  SEND_VALUE_FORMAT,
-                  /* offset */ 1);
+//        int newSENDValueString = Integer.parseInt(mEditTextSendValue.getText().toString());
+//
+//        mSendCharacteristic.setValue(newSENDValueString,
+//                SEND_VALUE_FORMAT,
+//                /* offset */ 1);
         Toast.makeText(getActivity(), R.string.notificationsEnabled, Toast.LENGTH_SHORT)
                 .show();
       }
     });
   }
 
-  //노티피케이션을 못 쓰게 되면 알림
+  //노티피케이션을 못 쓰게 되면 앱 푸시 알림
   @Override
   public void notificationsDisabled(BluetoothGattCharacteristic characteristic) {
     if (characteristic.getUuid() != SEND_UUID) {
@@ -373,7 +416,27 @@ public class NordicUartServiceFragment extends ServiceFragment {
       }
     });
   }
+
+  // 유효한 특성 값인지 알아내는 함수. 예를 들어 String값을 보낸다면
+  // 그게 하나하나 파싱 했을 때 저 비트 안에 들어가는지 ㅇㅇ
+  private boolean isValidCharacteristicValue(String s, int format) {
+    try {
+      int value = Integer.parseInt(s);
+      if (format == BluetoothGattCharacteristic.FORMAT_UINT8) {
+        return (value >= MIN_UINT) && (value <= MAX_UINT8);
+      } else if (format == BluetoothGattCharacteristic.FORMAT_UINT16) {
+        return (value >= MIN_UINT) && (value <= MAX_UINT16);
+      } else {
+        throw new IllegalArgumentException(format + " is not a valid argument");
+      }
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
+  //이건 그냥 btye array에서 Hex값으로 바꿔주는 함수(안 씀)
   private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
   public static String bytesToHex(byte[] bytes) {
     char[] hexChars = new char[bytes.length * 2];
     for (int j = 0; j < bytes.length; j++) {
@@ -383,4 +446,11 @@ public class NordicUartServiceFragment extends ServiceFragment {
     }
     return new String(hexChars);
   }
+  /*
+  이건 string to ASCII. Notify 할 때 쓸 수 있음. string을 editText에 입력 받으면
+  그걸 다시 ASCII로 변환한 다음에 그걸 전송하고
+  */
+
+
+
 }
