@@ -152,7 +152,6 @@ public class NordicUartServiceFragment extends ServiceFragment {
           mSendCharacteristic.setValue(newSENDbytes);
 
         } else {
-          //이건 이제
           Toast.makeText(getActivity(), "Chracteristic 형식이 틀립니다.",
                   Toast.LENGTH_SHORT).show();
         }
@@ -222,7 +221,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
     //이거는 Send
     mSendCharacteristic =
             new BluetoothGattCharacteristic(SEND_UUID,
-                    BluetoothGattCharacteristic.PROPERTY_INDICATE,
+                    BluetoothGattCharacteristic.PROPERTY_NOTIFY,
                     /* No permissions */ 0);
 
     mSendCharacteristic.addDescriptor(
@@ -238,8 +237,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
                     BluetoothGattCharacteristic.PROPERTY_WRITE,
                     BluetoothGattCharacteristic.PERMISSION_WRITE);
 
-    mReceiveCCCDescriptor = Peripheral.getClientCharacteristicConfigurationDescriptor();
-    mReceiveCharacteristic.addDescriptor(mReceiveCCCDescriptor);
+    mReceiveCharacteristic.addDescriptor(Peripheral.getClientCharacteristicConfigurationDescriptor());
 
     mReceiveCharacteristic.addDescriptor(
             Peripheral.getCharacteristicUserDescriptionDescriptor(RECEIVE_DESCRIPTION));
