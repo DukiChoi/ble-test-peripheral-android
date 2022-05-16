@@ -28,7 +28,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
+//제일 먼저 시작하는 액티비티.
+//4가지 메뉴를 보여줌
 public class Peripherals extends ListActivity {
 
   private static final String[] PERIPHERALS_NAMES = new String[]{"Battery", "Heart Rate Monitor", "Health Thermometer", "Nordic Uart"};
@@ -62,6 +63,7 @@ public class Peripherals extends ListActivity {
       Log.i("권한 테스트", "권한이 있네요");
     }
 
+    //여기서 Array어뎁터를 한개 만들고 리스트를 띄우는 것.
     ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
         /* layout for the list item */ android.R.layout.simple_list_item_1,
         /* id of the TextView to use */ android.R.id.text1,
@@ -69,6 +71,8 @@ public class Peripherals extends ListActivity {
     setListAdapter(adapter);
   }
 
+  //리스트에 아이템 클릭시에 Peripheral에다가 position(리스트 아이템 몇번째를 클릭했는지 저장하는 변수)을
+  //EXTRA_PERIPHERAL_INDEX 라는 이름으로 집어넣고 Peripheral 클래스를 호출한다.
   @Override
   protected void onListItemClick(ListView l, View v, int position, long id) {
     super.onListItemClick(l, v, position, id);

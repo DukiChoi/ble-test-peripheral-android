@@ -129,7 +129,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
     }
   };
   /*
-  GATT 서버를 연다고 함은 이렇게 외부 요청 같은 것들을 계속 Callback 받으면서 각각의 요청들에 대한
+  BluetoothGATT 서버를 연다고 함은 이렇게 외부 요청 같은 것들을 계속 Callback 받으면서 각각의 요청들에 대한
   세세한 설정 들을 해놓는 것이다.
   예를 들어서 Write요청을 받게 된다면 WriteCharacteristic 같은 펑션 콜을 한다든가 하는 것이
   다 여기에 구현이 되어있다.
@@ -300,8 +300,9 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
     mBluetoothAdapter = mBluetoothManager.getAdapter();
 
 
-
-    // If we are not being restored from a previous state then create and add the fragment.
+    //정확히 여기서 4가지 서비스 중 한개로 넘어가는 것 ㅇㅇ Peripherals에서 받아온 리스트 인덱스 번호
+    //EXTRA_PERIPHERAL_INDEX를 가지고 어떤 서비스로 넘어갈지 판단한다.
+    //If we are not being restored from a previous state then create and add the fragment.
     if (savedInstanceState == null) {
       int peripheralIndex = getIntent().getIntExtra(Peripherals.EXTRA_PERIPHERAL_INDEX,
           /* default */ -1);
