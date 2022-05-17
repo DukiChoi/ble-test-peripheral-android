@@ -173,7 +173,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
         BluetoothGattCharacteristic characteristic) {
       super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
       Log.d(TAG, "Device tried to read characteristic: " + characteristic.getUuid());
-      Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()));
+      Log.d(TAG, "Value: " + Arrays.toString(characteristic.getValue()) +  " that is: " + bytesToString(characteristic.getValue()));
       if (offset != 0) {
         mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
             /* value (optional) */ null);
@@ -209,7 +209,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
         int offset, BluetoothGattDescriptor descriptor) {
       super.onDescriptorReadRequest(device, requestId, offset, descriptor);
       Log.d(TAG, "Device tried to read descriptor: " + descriptor.getUuid());
-      Log.d(TAG, "Value: " + Arrays.toString(descriptor.getValue()));
+      Log.d(TAG, "Value: " + Arrays.toString(descriptor.getValue()) +  " that is: " + bytesToString(descriptor.getValue()));
       if (offset != 0) {
         mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
             /* value (optional) */ null);
@@ -226,7 +226,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
         byte[] value) {
       super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded,
           offset, value);
-      Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value));
+      Log.v(TAG, "Descriptor Write Request " + descriptor.getUuid() + " " + Arrays.toString(value)  +  " that is: " + bytesToString(value));
       int status = BluetoothGatt.GATT_SUCCESS;
       if (descriptor.getUuid() == CLIENT_CHARACTERISTIC_CONFIGURATION_UUID) {
         BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
@@ -481,5 +481,12 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
       Log.d(TAG, "Devices: " + device.getAddress() + " " + device.getName());
       mGattServer.cancelConnection(device);
     }
+  }
+  public String bytesToString(byte[] value) {
+    String converted = "";
+    for (int i : value) {
+      converted = converted.concat(Character.toString((char) i));
+    }
+    return converted;
   }
 }

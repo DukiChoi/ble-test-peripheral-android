@@ -92,26 +92,26 @@ public class NordicUartServiceFragment extends ServiceFragment {
    * Temperature Measurement</a>
    */
 
-  //이건 RxChar UUID 설정 부분 (보내는 Char)
+  //이건 TxChar UUID 설정 부분 (보내는 Char)
   private static final UUID SEND_UUID = UUID
-          .fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");  //RxChar UUID
+          .fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");  //RxChar UUID
   private static final int SEND_VALUE_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
   private static final String SEND_DESCRIPTION = "This characteristic is used " +
-          "as RxChar Nordic Uart device";
+          "as TxChar Nordic Uart device";
 
 
-  //이건 TxChar UUID 설정 부분 (받아오는 Char)
+  //이건 RxChar UUID 설정 부분 (받아오는 Char)
   /**
    * See <a href="https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.measurement_interval.xml">
    * Measurement Interval</a>
    */
   private static final UUID RECIEVE_UUID = UUID
-          .fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");  //TxChar UUID
+          .fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");  //TxChar UUID
   private static final int RECEIVE_VALUE_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
 
 
   private static final String RECEIVE_DESCRIPTION = "This characteristic is used " +
-          "as TxChar of Nordic Uart device";
+          "as RxChar of Nordic Uart device";
 
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,8 +221,8 @@ public class NordicUartServiceFragment extends ServiceFragment {
     //이거는 Send
     mSendCharacteristic =
             new BluetoothGattCharacteristic(SEND_UUID,
-                    BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-                    /* No permissions */ 0);
+                    BluetoothGattCharacteristic.PROPERTY_NOTIFY|BluetoothGattCharacteristic.PROPERTY_READ,
+                    /* No permissions */ BluetoothGattCharacteristic.PERMISSION_READ);
 
     mSendCharacteristic.addDescriptor(
             Peripheral.getClientCharacteristicConfigurationDescriptor());
@@ -461,7 +461,12 @@ public class NordicUartServiceFragment extends ServiceFragment {
   이건 string to ASCII. Notify 할 때 쓸 수 있음. string을 editText에 입력 받으면
   그걸 다시 ASCII로 변환한 다음에 그걸 전송하고
   */
-
-
+  public String bytesToString(byte[] value) {
+    String converted = "";
+    for (int i : value) {
+      converted = converted.concat(Character.toString((char) i));
+    }
+    return converted;
+  }
 
 }
