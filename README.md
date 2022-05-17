@@ -20,6 +20,16 @@ From the app a developer can set the characteristics' values, send notifications
 ![Heart Rate Service](Heart%20Rate%20Service.png)
 ![Health Thermometer Service](Health%20Thermometer%20Service.png)
 
+#Additional Menu by DukiChoi
+
+I added one more service called NordicUart Service.
+This is as service for connecting BLE application with BLE central devices using nordic uart service.
+This service also acts as BLE periphral like the services listed above.
+
+![NordicUart Service Menu](NordicUartService1.png)
+![NordicUart Service Service](NordicUartService2.png)
+
+
 ### Caveats
 
 BLE peripheral mode was introduced in Android 5.0 Lollipop. Due to hardware chipset dependency, some devices don't have access to this feature. Here's a non-exhaustive list of devices that support BLE peripheral mode at the time of writing: Nexus 5X, Nexus 6P, Nexus 6, Nexus 9, Moto E 4G LTE, LG G4, Galaxy S6. See https://altbeacon.github.io/android-beacon-library/beacon-transmitter-devices.html for more.
