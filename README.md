@@ -25,6 +25,7 @@ From the app a developer can set the characteristics' values, send notifications
 I added one more service called NordicUart Service.
 This is as service for connecting BLE application with BLE central devices using nordic uart service.
 This service also acts as BLE periphral like the services listed above.
+By Nordic uart service device which scans and connects this adroid application can get notified message via TxChar and write message via RxChar.
 
 ![NordicUart Service Menu](NordicUartService1.png)
 ![NordicUart Service Service](NordicUartService2.png)
