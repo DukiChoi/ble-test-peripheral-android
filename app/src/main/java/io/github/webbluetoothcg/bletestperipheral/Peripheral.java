@@ -485,7 +485,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
     }
   }
 
-  //이건 개인적으로 추가해준 byte array(Ascii array)에서 string으로 변환 함수
+  //이건 개인적으로 추가해준 byte array(Ascii array)에서 string으로 변환 함수.
   public String bytesToString(byte[] value) {
     String converted = "";
     for (int i : value) {
