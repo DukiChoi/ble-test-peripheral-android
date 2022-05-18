@@ -197,10 +197,15 @@ public class NordicUartServiceFragment extends ServiceFragment {
 
       //두번째, String을 byte 형식으로 바꿔서 보내기
       byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
-      mSendCharacteristic.setValue(newSENDbytes);
+      //int로 보내는 시도
+      int integer_to_send = Integer.parseInt(mEditTextSendValue.getText().toString());
+      mSendCharacteristic.setValue(integer_to_send,
+              SEND_VALUE_FORMAT,
+              /* offset */ 0);
+//      mSendCharacteristic.setValue(newSENDbytes);
 
       //★★★★★★★★★★★★★★★★★★★★★★★★★
-      //정확히는 여기에서 NOTIFICATION을 SEND 해준다.
+      //정확히는 여기에서 NOTIFICATION을 SEND 해준다. (TxChar을 통해서)
       //★★★★★★★★★★★★★★★★★★★★★★★★★
       mDelegate.sendNotificationToDevices(mSendCharacteristic);
       Log.v(TAG, "sent: " + Arrays.toString(mSendCharacteristic.getValue()));
@@ -339,8 +344,9 @@ public class NordicUartServiceFragment extends ServiceFragment {
 
     //보낼 값이니까 Send Characteristic(TxChar)의 value 값을 변경해주는데 byte array형식으로 집어넣는다.
     //이건 앞으로 (uint8형식으로 넣는다는 뜻) flag를 8(uint8)로 맞춰주는 것.
-    mSendCharacteristic.setValue(new byte[]{0b00001000, 0});
-    mReceiveCharacteristic.setValue(new byte[]{0b00001000, 0});
+    //mSendCharacteristic.setValue(new byte[]{0b00001000, 0, 0, 0});
+    mSendCharacteristic.setValue(new byte[]{0});
+    mReceiveCharacteristic.setValue(new byte[]{0b00001000, 0, 0, 0});
     // Characteristic Value: [flags, 0, 0, 0]
 
 
@@ -359,7 +365,7 @@ public class NordicUartServiceFragment extends ServiceFragment {
 
 
   //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-  //이건 Receive 값 받아오는 함수(Write 권한 있는 TxChar)
+  //이건 Receive 값 받아오는 함수(Write 권한 있는 RxChar)
   //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
   @Override
   public int writeCharacteristic(BluetoothGattCharacteristic characteristic, int offset, byte[] value) {
