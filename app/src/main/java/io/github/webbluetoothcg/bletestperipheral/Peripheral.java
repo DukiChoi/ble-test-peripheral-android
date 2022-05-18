@@ -196,7 +196,7 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
       super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
           responseNeeded, offset, value);
       int status = mCurrentServiceFragment.writeCharacteristic(characteristic, offset, value);
-      Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value) + "/ status: " + status);
+      Log.v(TAG, "Characteristic Write request: " + Arrays.toString(value) + "/ status: " + status +  " that is: " + bytesToString(value));
       if (responseNeeded) {
         mGattServer.sendResponse(device, requestId, status,
             /* No need to respond with an offset */ 0,
