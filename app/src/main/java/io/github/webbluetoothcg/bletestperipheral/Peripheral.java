@@ -444,6 +444,8 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
   ///////////////////////
   ////// Bluetooth //////
   ///////////////////////
+
+  //여기서 처음에 디스크립터의 기본 값들 설정해줌
   public static BluetoothGattDescriptor getClientCharacteristicConfigurationDescriptor() {
     BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(
         CLIENT_CHARACTERISTIC_CONFIGURATION_UUID,
@@ -482,6 +484,8 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
       mGattServer.cancelConnection(device);
     }
   }
+
+  //이건 개인적으로 추가해준 byte array(Ascii array)에서 string으로 변환 함수
   public String bytesToString(byte[] value) {
     String converted = "";
     for (int i : value) {
