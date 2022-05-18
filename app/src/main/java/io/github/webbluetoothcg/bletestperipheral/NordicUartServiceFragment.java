@@ -188,26 +188,21 @@ public class NordicUartServiceFragment extends ServiceFragment {
     @Override
     public void onClick(View v) {
 
-//      //첫번째. int만 보내기
-//      int newSENDValueString = Integer.parseInt(mEditTextSendValue.getText().toString());
-//
-//      mSendCharacteristic.setValue(newSENDValueString,
-//              SEND_VALUE_FORMAT,
-//              /* offset */ 1);
-
-      //두번째, String을 byte 형식으로 바꿔서 보내기
+      //첫번째 방법, String 형식을 byte 형식으로 바꿔서 보내기
       byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
-      //int로 보내는 시도
+
+      //두번째 방법, Integer로 보내기([값]형태)
       int integer_to_send = Integer.parseInt(mEditTextSendValue.getText().toString());
       mSendCharacteristic.setValue(integer_to_send,
               SEND_VALUE_FORMAT,
               /* offset */ 0);
 //      mSendCharacteristic.setValue(newSENDbytes);
 
-      //★★★★★★★★★★★★★★★★★★★★★★★★★
+      //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
       //정확히는 여기에서 NOTIFICATION을 SEND 해준다. (TxChar을 통해서)
-      //★★★★★★★★★★★★★★★★★★★★★★★★★
+      //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
       mDelegate.sendNotificationToDevices(mSendCharacteristic);
+      //Log.v(TAG, "sent: " + Arrays.toString(mSendCharacteristic.getValue()) + " / that is: " + bytesToString(mSendCharacteristic.getValue()));
       Log.v(TAG, "sent: " + Arrays.toString(mSendCharacteristic.getValue()));
     }
   };
@@ -346,7 +341,9 @@ public class NordicUartServiceFragment extends ServiceFragment {
     //이건 앞으로 (uint8형식으로 넣는다는 뜻) flag를 8(uint8)로 맞춰주는 것.
     //mSendCharacteristic.setValue(new byte[]{0b00001000, 0, 0, 0});
     mSendCharacteristic.setValue(new byte[]{0});
-    mReceiveCharacteristic.setValue(new byte[]{0b00001000, 0, 0, 0});
+    //mReceiveCharacteristic.setValue(new byte[]{0b00001000, 0, 0, 0});
+    mReceiveCharacteristic.setValue(new byte[]{0});
+
     // Characteristic Value: [flags, 0, 0, 0]
 
 
@@ -364,9 +361,9 @@ public class NordicUartServiceFragment extends ServiceFragment {
   }
 
 
-  //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+  //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
   //이건 Receive 값 받아오는 함수(Write 권한 있는 RxChar)
-  //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+  //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
   @Override
   public int writeCharacteristic(BluetoothGattCharacteristic characteristic, int offset, byte[] value) {
     if (offset != 0) {
@@ -380,14 +377,16 @@ public class NordicUartServiceFragment extends ServiceFragment {
     getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        //이 부분에서 아스키 코드로 된 btye array를 string으로 변환해줌
-        String converted = "";
-        for (int i : value) {
-          converted = converted.concat(Character.toString((char) i));
-        }
-        mTextViewReceiveValue.setText(converted);
+//        //첫번째 방법, byte 형식을 String 형식으로 바꿔서 받기
+//        //이 부분에서 아스키 코드로 된 btye array를 string으로 변환해줌
+//        mTextViewReceiveValue.setText(bytesToString(value));
+//        //로그에서 원래 아스키코드 배열과 / 변환되어 나온 string값을 보여줌
+//        Log.v(TAG, "Received: " + Arrays.toString(value) + " / converted into:" + bytesToString(value));
+
+        //두번째 방법, Integer로 받기([값]형태)
+        mTextViewReceiveValue.setText(Arrays.toString(value));
         //로그에서 원래 아스키코드 배열과 / 변환되어 나온 string값을 보여줌
-        Log.v(TAG, "Received: " + Arrays.toString(value) + " / converted into:" + converted);
+        Log.v(TAG, "Received: " + Arrays.toString(value));
       }
     });
     return BluetoothGatt.GATT_SUCCESS;
