@@ -140,17 +140,15 @@ public class NordicUartServiceFragment extends ServiceFragment {
         String newSENDValueString = textView.getText().toString();
         if (isValidCharacteristicValue(newSENDValueString,
                 SEND_VALUE_FORMAT)) {
-//          //첫번째. int로 보내기
-//          int newSendValue = Integer.parseInt(newSENDValueString);
-//
-//          mSendCharacteristic.setValue(newSendValue,
-//                  SEND_VALUE_FORMAT,
-//                  /* offset */ 1);
+//          //첫번째, String 형식을 byte 형식으로 바꾸기
+//          byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
+//          mSendCharacteristic.setValue(newSENDbytes);
+          //두번째. int로 바꾸기
+          int newSendValue = Integer.parseInt(newSENDValueString);
 
-          //두번째, String을 byte 형식으로 바꿔서 보내기
-          byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
-          mSendCharacteristic.setValue(newSENDbytes);
-
+          mSendCharacteristic.setValue(newSendValue,
+                  SEND_VALUE_FORMAT,
+                  /* offset */ 0);
         } else {
           Toast.makeText(getActivity(), "Chracteristic 형식이 틀립니다.",
                   Toast.LENGTH_SHORT).show();
@@ -188,15 +186,15 @@ public class NordicUartServiceFragment extends ServiceFragment {
     @Override
     public void onClick(View v) {
 
-      //첫번째 방법, String 형식을 byte 형식으로 바꿔서 보내기
-      byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
+//      //첫번째 방법, String 형식을 byte 형식으로 바꿔서 보내기
+//      byte[] newSENDbytes = mEditTextSendValue.getText().toString().getBytes(StandardCharsets.US_ASCII);
+//      mSendCharacteristic.setValue(newSENDbytes);
 
       //두번째 방법, Integer로 보내기([값]형태)
       int integer_to_send = Integer.parseInt(mEditTextSendValue.getText().toString());
       mSendCharacteristic.setValue(integer_to_send,
               SEND_VALUE_FORMAT,
               /* offset */ 0);
-//      mSendCharacteristic.setValue(newSENDbytes);
 
       //★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
       //정확히는 여기에서 NOTIFICATION을 SEND 해준다. (TxChar을 통해서)
