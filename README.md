@@ -1,3 +1,8 @@
+This is not my original work!!!!
+PLEASE beware!!!!
+
+Original work : https://github.com/WebBluetoothCG/ble-test-peripheral-android 
+
 # BLE Peripheral Simulator
 [![Build Status](https://travis-ci.org/WebBluetoothCG/ble-test-peripheral-android.svg)](https://travis-ci.org/WebBluetoothCG/ble-test-peripheral-android)
 
