@@ -145,12 +145,16 @@ public class Peripheral extends Activity implements ServiceFragmentDelegate {
       if (status == BluetoothGatt.GATT_SUCCESS) {
         if (newState == BluetoothGatt.STATE_CONNECTED) {
           mBluetoothDevices.add(device);
+          //추가코드 : 컨넥션 연결되었을 떄 advertisement 멈춤.
+          mAdvertiser.stopAdvertising(mAdvCallback);
           updateConnectedDevicesStatus();
           Log.v(TAG, "Connected to device: " + device.getAddress());
         } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
           mBluetoothDevices.remove(device);
           updateConnectedDevicesStatus();
+
           Log.v(TAG, "Disconnected from device");
+          mAdvertiser.startAdvertising(mAdvSettings, mAdvData, mAdvScanResponse, mAdvCallback);
         }
       } else {
         mBluetoothDevices.remove(device);
